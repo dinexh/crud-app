@@ -1,9 +1,17 @@
+"use client";
+
+import { useRouter } from 'next/navigation';
+
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div className="home-component">
       <div className="home-component-in">
         <div className="home-component-in-content">
-          <h1 className="home-component-in-content-heading">CRUD Application Assignment</h1>
+          <div className="home-component-in-content-heading">
+            <h1>CRUD Application Assignment</h1>
+          </div>
           <div className="home-component-in-content-description">
             <p>Welcome to my CRUD Application Assignment!</p>
             <p>This project demonstrates:</p>
@@ -15,10 +23,17 @@ export default function Home() {
             </ul>
           </div>
           <div className="home-component-in-content-footer">
-            <p>Built with Next.js , TypeScript , Mysql , AWS EC2</p>
-            <button className="home-component-in-content-footer-button">
-              View Documentation
-            </button>
+            <div className="home-component-in-content-footer-text">
+              <p>Built with Next.js , TypeScript , Mysql , AWS EC2</p>
+            </div>
+            <div className="home-component-in-content-footer-buttons">
+              <button>
+                View Documentation
+              </button>
+              <button onClick={() => router.push('/auth/login')}>
+                Get Started / login
+              </button>
+            </div>
           </div>
         </div>
       </div>
