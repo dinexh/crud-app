@@ -4,9 +4,113 @@
   box-sizing: border-box;
   font-family: var(--font-poppins);
 }
-.home-component{
+
+:root {
+  --primary-color: #0f172a;
+  --secondary-color: #3b82f6;
+  --background-color: #f8fafc;
+  --text-color: #334155;
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.home-component {
+  min-height: 100vh;
+  background-color: var(--background-color);
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  padding: 1.5rem;
+}
+
+.home-component-in {
+  width: 100%;
+  max-width: 700px;
+}
+
+.home-component-in-content {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: var(--box-shadow);
+}
+
+.home-component-in-content-heading {
+  color: var(--primary-color);
+  font-size: 2.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.home-component-in-content-description {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.home-component-in-content-description p {
+  margin-bottom: 1.25rem;
+}
+
+.home-component-in-content-description ul {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.home-component-in-content-description li {
+  margin-bottom: 0.75rem;
+  padding-left: 0.5rem;
+  position: relative;
+}
+
+.home-component-in-content-description li::marker {
+  color: var(--secondary-color);
+}
+
+.home-component-in-content-footer {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.home-component-in-content-footer p {
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.home-component-in-content-footer-button {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.home-component-in-content-footer-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .home-component-in-content {
+    padding: 1.5rem;
+  }
+
+  .home-component-in-content-heading {
+    font-size: 1.75rem;
+  }
+
+  .home-component-in-content-description {
+    font-size: 1rem;
+  }
 }
