@@ -1,5 +1,8 @@
 "use client";
 import { useEffect, useState } from 'react';
+import { FiPlus, FiCheck, FiTrash2, FiLogOut, FiClock, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
+import toast, { Toaster, Toast } from 'react-hot-toast';
+import './page.css';
 
 interface Task {
     id: number;
@@ -11,124 +14,211 @@ interface Task {
 export default function Dashboard() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [newTask, setNewTask] = useState({ title: '', description: '' });
+    const [userName, setUserName] = useState('guest'); // We'll use this instead of user object
+
+    // Custom toast functions
+    const showSuccessToast = (message: string) => {
+        toast.custom(
+            (t: Toast) => (
+                <div className={`toast-custom toast-success ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+                    <span className="toast-icon"><FiCheckCircle size={20} /></span>
+                    {message}
+                </div>
+            ),
+            { duration: 2000 }
+        );
+    };
+
+    const showErrorToast = (message: string) => {
+        toast.custom(
+            (t: Toast) => (
+                <div className={`toast-custom toast-error ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+                    <span className="toast-icon"><FiAlertCircle size={20} /></span>
+                    {message}
+                </div>
+            ),
+            { duration: 3000 }
+        );
+    };
 
     useEffect(() => {
         fetchTasks();
     }, []);
 
     const fetchTasks = async () => {
-        const res = await fetch('/api/tasks');
-        if (res.ok) {
-            const data = await res.json();
-            setTasks(data);
-        } else {
-            console.error('Failed to fetch tasks:', res.statusText);
+        try {
+            const res = await fetch('/api/tasks');
+            if (res.ok) {
+                const data = await res.json();
+                setTasks(data);
+            } else {
+                showErrorToast('Failed to fetch tasks');
+            }
+        } catch (error) {
+            showErrorToast('Error connecting to server');
         }
     };
 
     const handleAddTask = async () => {
-        const res = await fetch('/api/tasks', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newTask),
-        });
-        if (res.ok) {
-            setNewTask({ title: '', description: '' });
-            fetchTasks();
+        if (!newTask.title.trim()) {
+            showErrorToast('Please enter a task title');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/tasks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newTask),
+            });
+            if (res.ok) {
+                setNewTask({ title: '', description: '' });
+                fetchTasks();
+                showSuccessToast('Task added successfully');
+            } else {
+                showErrorToast('Failed to add task');
+            }
+        } catch (error) {
+            showErrorToast('Error connecting to server');
         }
     };
 
     const handleToggleStatus = async (id: number) => {
-        const res = await fetch('/api/tasks', {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id }),
-        });
-        if (res.ok) {
-            fetchTasks();
+        try {
+            const res = await fetch('/api/tasks', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
+            });
+            if (res.ok) {
+                fetchTasks();
+                showSuccessToast('Task status updated');
+            } else {
+                showErrorToast('Failed to update task');
+            }
+        } catch (error) {
+            showErrorToast('Error connecting to server');
         }
     };
 
     const handleDeleteTask = async (id: number) => {
-        const res = await fetch('/api/tasks', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id }),
-        });
-        if (res.ok) {
-            fetchTasks();
+        try {
+            const res = await fetch('/api/tasks', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
+            });
+            if (res.ok) {
+                fetchTasks();
+                showSuccessToast('Task deleted successfully');
+            } else {
+                showErrorToast('Failed to delete task');
+            }
+        } catch (error) {
+            showErrorToast('Error connecting to server');
         }
     };
 
+    const handleLogout = () => {
+        // Add your logout logic here
+        showSuccessToast('Logged out successfully');
+    };
+
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
-
-            <div className="mb-4">
-                <input
-                    type="text"
-                    placeholder="Task Title"
-                    value={newTask.title}
-                    onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                    className="border p-2 mr-2 rounded"
-                />
-                <input
-                    type="text"
-                    placeholder="Task Description"
-                    value={newTask.description}
-                    onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                    className="border p-2 mr-2 rounded"
-                />
-                <button 
-                    onClick={handleAddTask} 
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-                >
-                    Add Task
-                </button>
+        <div className="dashboard-component">
+            <Toaster 
+                position="top-center"
+                toastOptions={{
+                    duration: 2000,
+                    style: {
+                        background: 'transparent',
+                        boxShadow: 'none',
+                        border: 'none',
+                        padding: 0,
+                    },
+                }}
+            />
+            <div className="dashboard-component-header">
+                <div className="dashboard-component-header-in-one">
+                    <h2>Task Dashboard</h2>
+                </div>
+                <div className="dashboard-component-header-in-two">
+                    <h2>Welcome, {userName}</h2>
+                    <button  onClick={handleLogout}>
+                        <FiLogOut /> Logout
+                    </button>
+                </div>
             </div>
-
-            <ul className="space-y-4">
-                {tasks.map((task) => (
-                    <li 
-                        key={task.id} 
-                        className={`border p-4 rounded-lg flex justify-between items-center ${
-                            task.status === 'completed' ? 'bg-gray-50' : 'bg-white'
-                        }`}
+            <div className="dashboard-component-body">
+                <div className="task-form">
+                    <input
+                        type="text"
+                        placeholder="Task Title"
+                        value={newTask.title}
+                        onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                        className="task-input"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Task Description"
+                        value={newTask.description}
+                        onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                        className="task-input"
+                    />
+                    <button 
+                        onClick={handleAddTask} 
+                        className="btn btn-primary"
                     >
-                        <div className="flex-1">
-                            <h3 className={`font-bold ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                {task.title}
-                            </h3>
-                            <p className={task.status === 'completed' ? 'text-gray-500' : ''}>
-                                {task.description}
-                            </p>
-                            <span className={`text-sm ${
-                                task.status === 'completed' ? 'text-green-500' : 'text-yellow-500'
-                            }`}>
-                                {task.status}
-                            </span>
-                        </div>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => handleToggleStatus(task.id)}
-                                className={`px-4 py-2 rounded ${
-                                    task.status === 'completed'
-                                        ? 'bg-yellow-500 hover:bg-yellow-600'
-                                        : 'bg-green-500 hover:bg-green-600'
-                                } text-white transition-colors`}
-                            >
-                                {task.status === 'completed' ? 'Mark Pending' : 'Complete'}
-                            </button>
-                            <button 
-                                onClick={() => handleDeleteTask(task.id)}
-                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                        <FiPlus /> Add Task
+                    </button>
+                </div>
+
+                <ul className="task-list">
+                    {tasks.map((task) => (
+                        <li 
+                            key={task.id} 
+                            className={`task-item ${task.status === 'completed' ? 'completed' : ''}`}
+                        >
+                            <div className="task-content">
+                                <h3 className={`task-title ${task.status === 'completed' ? 'completed' : ''}`}>
+                                    {task.title}
+                                </h3>
+                                <p className={`task-description ${task.status === 'completed' ? 'completed' : ''}`}>
+                                    {task.description}
+                                </p>
+                                <span className={`task-status ${
+                                    task.status === 'completed' ? 'status-completed' : 'status-pending'
+                                }`}>
+                                    {task.status === 'completed' ? <FiCheck /> : <FiClock />}
+                                    {task.status}
+                                </span>
+                            </div>
+                            <div className="task-actions">
+                                <button
+                                    onClick={() => handleToggleStatus(task.id)}
+                                    className={`btn ${
+                                        task.status === 'completed'
+                                            ? 'btn-warning'
+                                            : 'btn-success'
+                                    }`}
+                                >
+                                    {task.status === 'completed' ? (
+                                        <><FiClock /> Mark Pending</>
+                                    ) : (
+                                        <><FiCheck /> Complete</>
+                                    )}
+                                </button>
+                                <button 
+                                    onClick={() => handleDeleteTask(task.id)}
+                                    className="btn btn-danger"
+                                >
+                                    <FiTrash2 /> Delete
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }
