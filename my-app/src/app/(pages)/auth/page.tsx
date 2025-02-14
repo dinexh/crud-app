@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
-import Auth from '../../../assets/auth.gif';
+import Auth from '../../assets/auth.gif';
 import './page.css';
 
 export default function AuthPage() {
