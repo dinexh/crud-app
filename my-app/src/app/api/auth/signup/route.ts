@@ -6,7 +6,6 @@ export async function POST(request: Request) {
   try {
     const { firstName, lastName, email, password } = await request.json();
 
-    // Check if user already exists
     const [existingUsers] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
     if (existingUsers.length > 0) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 400 });

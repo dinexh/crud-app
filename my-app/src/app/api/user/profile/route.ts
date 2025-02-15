@@ -10,17 +10,16 @@ interface DecodedToken extends JwtPayload {
 export async function GET(request: Request) {
     try {
         const authHeader = request.headers.get('authorization');
-        console.log('Auth header:', authHeader); // Debug log
+        console.log('Auth header:', authHeader); 
 
         if (!authHeader) {
             return NextResponse.json({ error: 'No authorization header' }, { status: 401 });
         }
 
         const token = authHeader.split(' ')[1];
-        console.log('Token:', token); // Debug log
-
+        console.log('Token:', token); 
         const decoded = await verifyToken(token) as DecodedToken;
-        console.log('Decoded token:', decoded); // Debug log
+        console.log('Decoded token:', decoded); 
 
         if (!decoded || !decoded.userId) {
             return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
@@ -31,7 +30,6 @@ export async function GET(request: Request) {
             [decoded.userId]
         );
 
-        // Type assertion for the rows array
         const users = rows as any[];
         
         if (users.length === 0) {

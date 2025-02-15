@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { FiGithub, FiArrowRight, FiUserPlus, FiDatabase, FiSearch, FiEdit2, FiTrash2, FiPlay, FiCode, FiBox, FiExternalLink } from 'react-icons/fi';
+import {  FiUserPlus, FiSearch, FiEdit2, FiTrash2, FiPlay} from 'react-icons/fi';
 
 export default function Home() {
   const router = useRouter();
@@ -12,7 +12,13 @@ export default function Home() {
           <div className="home-component-in-heading">
             <h1>CRUD Application Assignment</h1>  
             <p>Build with Next.js, TypeScript, MySQL, & AWS</p>
+            <div className="home-component-in-subheading">
+              <button onClick={() => router.push('/auth')} className="home-component-in-subheading-button">Get Started</button>
+              <button onClick={() => window.open('https://github.com/dinexh/crud-app', '_blank')} className="home-component-in-subheading-button">View Github</button>
+              <button onClick={() => window.open('https://docs.google.com/document/d/1xTUvHR482D6dL-UYn0KlV9d28UiKf0WUUN6WYSaf38Q/edit?usp=sharing', '_blank')} className="home-component-in-subheading-button">View Documentation</button>
+            </div>    
         </div>
+
         <div className="home-component-in-content">
           <div className="home-component-in-content-heading">
             <h1>Its Main Features</h1>
@@ -27,7 +33,7 @@ export default function Home() {
               </div>
               <div className="home-component-in-content-heading-features-item">
                 <FiEdit2 />
-                <h3>Edit tasks</h3>
+                <h3>Complete tasks</h3>
               </div>
               <div className="home-component-in-content-heading-features-item">
                 <FiTrash2 />

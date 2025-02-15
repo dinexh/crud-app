@@ -18,7 +18,6 @@ export default function Dashboard() {
     const [userName, setUserName] = useState<string>('');
     const router = useRouter();
 
-    // Custom toast functions
     const showSuccessToast = (message: string) => {
         toast.custom(
             (t: Toast) => (
@@ -44,7 +43,6 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
-        // Check if user is authenticated
         const token = localStorage.getItem('token');
         if (!token) {
             router.push('/auth');
@@ -152,7 +150,6 @@ export default function Dashboard() {
     };
 
     const handleLogout = () => {
-        // Add your logout logic here
         localStorage.removeItem('token');
         router.push('/auth');
         showSuccessToast('Logged out successfully');
