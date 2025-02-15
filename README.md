@@ -26,7 +26,6 @@ A full-stack Todo application built with Next.js, TypeScript, and MySQL.
 
 - User authentication (Sign up & Login)
 - Task management (Create, Read, Update, Delete)
-- Real-time updates
 - Responsive design
 - Secure password handling with bcrypt
 - JWT-based authentication
@@ -168,16 +167,16 @@ my-app/
    - `src/app/layout.tsx`: Root layout with common UI elements and providers.
 
 4. **API Routes:**
-   - `src/app/api/user/profile/route.ts`: Handles user profile operations (get, update).
+   - `src/app/api/user/profile/route.ts`: To Go user profile information
    - Additional API routes for task CRUD operations.
 
 ## API Endpoints
 
 - `POST /api/auth/signup` - User registration
 - `POST /api/auth/login` - User login
-- `GET /api/user/profile` - Get user profile
-- More endpoints for task management...
+- `GET /api/user/profile` - Get user information
+- `POST /api/tasks` - Create a new task
+- `GET /api/tasks` - Fetch all tasks
+- `PUT /api/tasks/:id` - Update a task
+- `DELETE /api/tasks/:id` - Delete a task
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.

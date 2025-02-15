@@ -74,8 +74,6 @@ export async function PATCH(request: NextRequest) {
                 { status: 400 }
             );
         }
-
-        // Toggle the status between 'pending' and 'completed'
         const [result] = await db.execute(
             `UPDATE tasks 
              SET status = CASE 
