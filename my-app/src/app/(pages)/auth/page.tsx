@@ -1,13 +1,111 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import Auth from '../../assets/auth.png';
 import './page.css';
 
 export default function AuthPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Store token in localStorage
+      localStorage.setItem('token', data.token);
+      toast.success('Login successful!');
+      
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
+
+    } catch (error: any) {
+      toast.error(error.message || 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Signup failed');
+      }
+
+      // Store token in localStorage
+      localStorage.setItem('token', data.token);
+      toast.success('Account created successfully!');
+      
+      // Redirect to dashboard after a short delay
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
+
+    } catch (error: any) {
+      toast.error(error.message || 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="auth-component">
@@ -20,10 +118,10 @@ export default function AuthPage() {
             </div>
             <div className="auth-component-in-two-form">
                 {activeTab === 'login' ? (
-                    <form onSubmit={(e) => e.preventDefault()}>
+                    <form onSubmit={handleLogin}>
                         <div className="form-group">
                             <label htmlFor="email">Email</label>
-                            <input type="email" id="email" placeholder="Enter your email" />
+                            <input type="email" id="email" placeholder="Enter your email" value={formData.email} onChange={handleInputChange} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
@@ -32,6 +130,8 @@ export default function AuthPage() {
                                     type={showPassword ? "text" : "password"} 
                                     id="password" 
                                     placeholder="Enter your password" 
+                                    value={formData.password}
+                                    onChange={handleInputChange}
                                 />
                                 <button 
                                     type="button"
@@ -52,24 +152,26 @@ export default function AuthPage() {
                                 </button>
                             </div>
                         </div>
-                        <button type="submit">Login</button>
+                        <button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Logging in...' : 'Login'}
+                        </button>
                         <p>
                             Don't have an account? <span onClick={() => setActiveTab('signup')}>Sign up</span>
                         </p>
                     </form>
                 ) : (
-                    <form onSubmit={(e) => e.preventDefault()}>
+                    <form onSubmit={handleSignup}>
                         <div className="form-group">
                             <label htmlFor="firstName">First Name</label>
-                            <input type="text" id="firstName" placeholder="First name" />
+                            <input type="text" id="firstName" placeholder="First name" value={formData.firstName} onChange={handleInputChange} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="lastName">Last Name</label>
-                            <input type="text" id="lastName" placeholder="Last name" />
+                            <input type="text" id="lastName" placeholder="Last name" value={formData.lastName} onChange={handleInputChange} />
                         </div>
                         <div className="form-group">  
                             <label htmlFor="email">Email</label>
-                            <input type="email" id="email" placeholder="Enter your email" />
+                            <input type="email" id="email" placeholder="Enter your email" value={formData.email} onChange={handleInputChange} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
@@ -78,6 +180,8 @@ export default function AuthPage() {
                                     type={showPassword ? "text" : "password"} 
                                     id="password" 
                                     placeholder="Create a password" 
+                                    value={formData.password}
+                                    onChange={handleInputChange}
                                 />
                                 <button 
                                     type="button"
@@ -105,6 +209,8 @@ export default function AuthPage() {
                                     type={showConfirmPassword ? "text" : "password"} 
                                     id="confirmPassword" 
                                     placeholder="Confirm your password" 
+                                    value={formData.confirmPassword}
+                                    onChange={handleInputChange}
                                 />
                                 <button 
                                     type="button"
@@ -125,7 +231,9 @@ export default function AuthPage() {
                                 </button>
                             </div>
                         </div>
-                        <button type="submit">Create Account</button>
+                        <button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Creating Account...' : 'Create Account'}
+                        </button>
                         <p>
                             Already have an account? <span onClick={() => setActiveTab('login')}>Login</span>
                         </p>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { FiPlus, FiCheck, FiTrash2, FiLogOut, FiClock, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 import toast, { Toaster, Toast } from 'react-hot-toast';
 import './page.css';
+import { useRouter } from 'next/navigation';
 
 interface Task {
     id: number;
@@ -14,7 +15,8 @@ interface Task {
 export default function Dashboard() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [newTask, setNewTask] = useState({ title: '', description: '' });
-    const [userName, setUserName] = useState('guest'); // We'll use this instead of user object
+    const [userName, setUserName] = useState<string>('');
+    const router = useRouter();
 
     // Custom toast functions
     const showSuccessToast = (message: string) => {
@@ -42,17 +44,47 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
+        // Check if user is authenticated
+        const token = localStorage.getItem('token');
+        if (!token) {
+            router.push('/auth');
+        }
         fetchTasks();
-    }, []);
+        fetchUserProfile();
+    }, [router]);
 
     const fetchTasks = async () => {
         try {
-            const res = await fetch('/api/tasks');
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/tasks', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (res.ok) {
                 const data = await res.json();
                 setTasks(data);
             } else {
                 showErrorToast('Failed to fetch tasks');
+            }
+        } catch (error) {
+            showErrorToast('Error connecting to server');
+        }
+    };
+
+    const fetchUserProfile = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/user/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setUserName(data.firstName || 'User');
+            } else {
+                showErrorToast('Failed to fetch user profile');
             }
         } catch (error) {
             showErrorToast('Error connecting to server');
@@ -121,23 +153,13 @@ export default function Dashboard() {
 
     const handleLogout = () => {
         // Add your logout logic here
+        localStorage.removeItem('token');
+        router.push('/auth');
         showSuccessToast('Logged out successfully');
     };
 
     return (
         <div className="dashboard-component">
-            <Toaster 
-                position="top-center"
-                toastOptions={{
-                    duration: 2000,
-                    style: {
-                        background: 'transparent',
-                        boxShadow: 'none',
-                        border: 'none',
-                        padding: 0,
-                    },
-                }}
-            />
             <div className="dashboard-component-header">
                 <div className="dashboard-component-header-in-one">
                     <h2>Task Dashboard</h2>
