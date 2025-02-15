@@ -1,4 +1,13 @@
-# Todo App
+# Todo App Assignent!
+Greetings!
+I have created a Todo App for displaying crud as part of assignment
+this readme will contain everything u need to get the app into ur system and get it working.
+if any questions please conatct me at dineshkorukonda.dev@gmail or 8897617900
+
+
+
+
+
 
 A full-stack Todo application built with Next.js, TypeScript, and MySQL.
 
