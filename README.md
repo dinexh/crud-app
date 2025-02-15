@@ -1,13 +1,24 @@
-# Todo App Assignent!
-Greetings!
-I have created a Todo App for displaying crud as part of assignment
-this readme will contain everything u need to get the app into ur system and get it working.
-if any questions please conatct me at dineshkorukonda.dev@gmail or 8897617900
+# Todo App - Internship Assignment
 
+## Introduction
 
+This project was developed as part of the internship qualification process. It demonstrates my ability to create a full-stack web application with modern technologies and best practices.
 
+### Project Overview
+A comprehensive Todo application that showcases:
+- Full-stack development using Next.js and TypeScript
+- Database design and implementation with MySQL
+- RESTful API development
+- Authentication and authorization
+- Clean code architecture and best practices
+- Responsive UI/UX design
 
+### Contact Information
+- **Developer**: Dinesh Korukonda
+- **Email**: dineshkorukonda.dev@gmail.com
+- **Phone**: +91 8897617900
 
+## Technical Details
 
 A full-stack Todo application built with Next.js, TypeScript, and MySQL.
 
